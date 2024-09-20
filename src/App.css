@@ -1,38 +1,138 @@
-.App {
+/* General Styles */
+.container {
+  background: linear-gradient(135deg, #f5af19, #f12711); /* Modern orange-red gradient background */
+  color: #333; /* Dark text for better contrast */
+  padding: 40px 20px; /* Increased padding for spacious layout */
   text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+  min-height: 100vh; /* Full-screen height */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.title {
+  font-size: 36px; /* Larger font for title */
+  color: #fff;
+  margin-bottom: 20px;
+  font-family: 'Poppins', sans-serif; /* A modern sans-serif font */
+  letter-spacing: 1px; /* Subtle letter spacing */
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Soft shadow effect */
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
+.text-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.score, .rockets {
+  font-size: 24px;
+  font-weight: bold;
+  color: #fff; /* White text for clarity */
+  background: rgba(255, 255, 255, 0.1); /* Semi-transparent background */
+  padding: 10px 20px;
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow for floating effect */
+}
+
+.icon {
+  width: 60px; /* Larger size for better visibility */
+  height: 60px;
+  margin-left: 15px;
+  filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.2)); /* Add a shadow to icons */
+  transition: transform 0.2s; /* Smooth transition for click effect */
+}
+
+.icon.clicked {
+  transform: scale(1.2); /* Slightly enlarge the icon when clicked */
+}
+
+/* Responsive Space (Game Area) */
+.space {
+  background: linear-gradient(135deg, #232526, #414345); /* Subtle dark gradient for the game area */
+  width: 70%; /* Adjust width as needed */
+  max-width: 400px; /* Set a max-width for larger screens */
+  height: 200px; /* Reduced height */
+  margin: 0 auto;
+  border-radius: 20px;
+  position: relative; /* Ensure this is set to make position absolute work */
+  padding: 20px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); /* Deeper shadow for a "card" effect */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.item {
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.item:hover {
+  transform: scale(1.1); /* Slight zoom effect on hover */
+}
+
+/* Click Effect for Coin */
+.item-img {
+  width: 150px; /* Larger size for the coin */
+  height: 150px;
+  border-radius: 50%; /* Circular image */
+  transition: transform 0.2s ease; /* Smooth transformation */
+}
+
+.item-img.clicked {
+  transform: scale(1.2); /* Slightly enlarge the image when clicked */
+}
+
+
+.item-img:hover {
+  transform: rotate(10deg);
+}
+
+/* Animation for Flying Stars */
+.flying-star {
+  position: absolute;
+  top: 0; /* Start at the top of the space box */
+  left: 50%; /* Start horizontally centered */
+  transform: translate(-50%, 0);
+  font-size: 24px;
+  color: #ffeb3b; /* Bright yellow text for contrast */
+  opacity: 0;
+  transition: opacity 0.5s, transform 1s;
+}
+
+.flying-star-text {
+  display: flex;
+  align-items: center;
+}
+
+.flying-star-text img {
+  width: 30px; /* Smaller icon size for better alignment with text */
+  margin-left: 5px; /* Spacing between text and coin */
+}
+
+.flying-star {
+  animation: fly 1s forwards; /* Fly animation */
+}
+
+@keyframes fly {
   to {
-    transform: rotate(360deg);
+    top: -100px; /* Move the coin up above the space box */
+    opacity: 0; /* Fade out the coin */
   }
+}
+
+/* Cooldown Timer */
+.cooldown {
+  font-size: 18px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 10px 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
 }
