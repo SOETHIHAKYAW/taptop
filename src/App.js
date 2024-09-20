@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import './App.css'; // Import the CSS file for styling
-import coinWithCrown from './assets/images/coinWithCrown.png'; // Import the PNG image
+import './App.css';
+import coinWithCrown from './assets/images/coinWithCrown.png';
 
 const HomeScreen = () => {
   const [score, setScore] = useState(0);
@@ -8,33 +8,44 @@ const HomeScreen = () => {
   const [starClicks, setStarClicks] = useState(0);
   const [cooldown, setCooldown] = useState(0);
   const [stars, setStars] = useState([]);
-  const [nextId, setNextId] = useState(1); // Unique ID for each flying coin
-  const [user, setUser] = useState(null); // Store Telegram user info
+  const [nextId, setNextId] = useState(1);
+  const [user, setUser] = useState(null);
+  const [menuItems, setMenuItems] = useState([]);
 
   // Use Telegram WebApp API to handle user data and the bottom menu
   useEffect(() => {
     if (window.Telegram && window.Telegram.WebApp) {
-      // Initialize the WebApp
       window.Telegram.WebApp.ready();
 
-      // Retrieve the Telegram user info
       const userInfo = window.Telegram?.WebApp?.initDataUnsafe?.user;
       if (userInfo) {
         setUser(userInfo);
-        console.log('User Info:', userInfo); // You can use this info as needed
+        console.log('User Info:', userInfo);
       }
 
-      // Configure the main button (menu button)
+      // Fetch the menu items from the backend
+      fetchMenuItems();
+    }
+  }, []);
+
+  // Fetch menu items from the backend API
+  const fetchMenuItems = async () => {
+    try {
+      const response = await fetch('https://taptopbackend.netlify.app/api/menu/items');
+      const data = await response.json();
+      setMenuItems(data);
+      console.log('Menu Items:', data);
+
       const mainButton = window.Telegram.WebApp.MainButton;
       mainButton.setText('Menu').show();
 
-      // Handle menu button click event
       mainButton.onClick(() => {
-        window.Telegram.WebApp.showAlert('Menu button clicked! You can add menu actions here.');
-        // For example, you could show a restart option or other game actions
+        window.Telegram.WebApp.showAlert(`Available options: ${data.join(', ')}`);
       });
+    } catch (error) {
+      console.error('Error fetching menu items:', error);
     }
-  }, []);
+  };
 
   useEffect(() => {
     let timer;
@@ -52,10 +63,7 @@ const HomeScreen = () => {
   const collectStar = (e) => {
     if (rockets > 0) {
       if (starClicks < 100) {
-        // Add a new star animation with a small delay
         addStarAnimation(e);
-
-        // Increase the frequency of adding new stars
         setStarClicks(prevStarClicks => prevStarClicks + 1);
       } else {
         setRockets(prevRockets => prevRockets - 1);
@@ -70,33 +78,29 @@ const HomeScreen = () => {
   const addStarAnimation = (e) => {
     if (!e || !e.currentTarget) return;
 
-    const spaceRect = e.currentTarget.parentElement.getBoundingClientRect(); // Get space box
-    const coinRect = e.currentTarget.getBoundingClientRect(); // Get clicked coin position
+    const spaceRect = e.currentTarget.parentElement.getBoundingClientRect();
+    const coinRect = e.currentTarget.getBoundingClientRect();
 
-    // Calculate new position relative to the space box
     const newStarPosition = {
-      x: coinRect.left - spaceRect.left + coinRect.width / 2, // Center horizontally within the space box
-      y: coinRect.top - spaceRect.top - 40 // Start above the image
+      x: coinRect.left - spaceRect.left + coinRect.width / 2,
+      y: coinRect.top - spaceRect.top - 40
     };
 
     const newStar = { id: nextId, position: newStarPosition, opacity: 1 };
     setStars(prevStars => [...prevStars, newStar]);
-    setNextId(prevId => prevId + 1); // Increment ID for next coin
+    setNextId(prevId => prevId + 1);
 
-    // Add clicked effect
     const coinImage = e.currentTarget;
     coinImage.classList.add('clicked');
-    
-    // Remove clicked effect after animation
+
     setTimeout(() => {
       coinImage.classList.remove('clicked');
-    }, 200); // Match the click effect duration
+    }, 200);
 
-    // Ensure to remove the flying star after animation to avoid too many elements in the DOM
     setTimeout(() => {
       setScore(prevScore => prevScore + 1);
       setStars(prevStars => prevStars.filter(star => star.id !== newStar.id));
-    }, 800); // Match the animation duration
+    }, 800);
   };
 
   return (
@@ -115,8 +119,8 @@ const HomeScreen = () => {
           src={coinWithCrown} 
           alt="Coin with Crown" 
           className="icon"
-          onClick={collectStar}  // Make the image clickable
-          style={{ cursor: 'pointer' }} // Pointer cursor to show it's clickable
+          onClick={collectStar}
+          style={{ cursor: 'pointer' }}
         />
       </div>
 
@@ -133,11 +137,10 @@ const HomeScreen = () => {
           onClick={collectStar}
         />
 
-        {/* Flying stars (coins) inside the space box */}
         {stars.map(star => (
           <div key={star.id} className="flying-star" style={{
-            left: `${star.position.x}px`, // Set absolute position
-            top: `${star.position.y}px`, // Set absolute position
+            left: `${star.position.x}px`,
+            top: `${star.position.y}px`,
             opacity: star.opacity
           }}>
             <p className="flying-star-text">+1 <img src={coinWithCrown} alt="Coin with Crown" className="icon" /></p>
