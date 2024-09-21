@@ -31,21 +31,21 @@ const HomeScreen = () => {
   // Fetch menu items from the backend API
   const fetchMenuItems = async () => {
     try {
-      const response = await fetch('https://taptopbackend.netlify.app/api/menu/items');
+      const response = await fetch(`${process.env.TAPTOP_APP_API_URL}/api/menu/items`);
       const data = await response.json();
       setMenuItems(data);
       console.log('Menu Items:', data);
-
+  
       const mainButton = window.Telegram.WebApp.MainButton;
       mainButton.setText('Menu').show();
-
+  
       mainButton.onClick(() => {
         window.Telegram.WebApp.showAlert(`Available options: ${data.join(', ')}`);
       });
     } catch (error) {
       console.error('Error fetching menu items:', error);
     }
-  };
+  };  
 
   useEffect(() => {
     let timer;
